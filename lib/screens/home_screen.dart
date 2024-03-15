@@ -32,12 +32,21 @@ class _HomeScreenState extends State<HomeScreen> {
     );
     setState(() {
       data = jsonDecode(response.body);
-      items.addAll(data!['items']);
-      if (data['total_count'] % pageSize == 0) {
-        totalPages = data['total_count'] ~/ pageSize;
+      if (response.statusCode == 200) {
+        items.addAll(data['items']);
+        if (data['total_count'] % pageSize == 0) {
+          totalPages = data['total_count'] ~/ pageSize;
+        } else {
+          totalPages = (data['total_count'] / pageSize).floor() + 1;
+        }
       } else {
-        totalPages = (data['total_count'] / pageSize).floor() + 1;
+        print(response.statusCode);
       }
+      // if (data['total_count'] % pageSize == 0) {
+      //   totalPages = data['total_count'] ~/ pageSize;
+      // } else {
+      //   totalPages = (data['total_count'] / pageSize).floor() + 1;
+      // }
     });
   }
 
@@ -45,7 +54,8 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     scrollController.addListener(() {
-      if (scrollController.position.pixels == scrollController.position.maxScrollExtent) {
+      if (scrollController.position.pixels ==
+          scrollController.position.maxScrollExtent) {
         setState(() {
           if (currentPage < totalPages - 1) {
             ++currentPage;
@@ -110,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             size: 24.0,
                           ),
                         ),
-                        hintText: 'Enter the repository name',
+                        hintText: 'Enter repository name',
                         labelStyle: const TextStyle(fontSize: 14.0),
                         hintStyle: const TextStyle(fontSize: 14.0),
                         contentPadding: const EdgeInsets.only(left: 16.0),
@@ -153,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       child: const Center(
                         child: Text(
-                          'No search results\nEnter the repository name above',
+                          'No search results\nEnter repository name above',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.white,
@@ -177,7 +187,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       child: const Center(
                         child: Text(
-                          'No matches\nTry changing the repository name',
+                          'No matches\nTry changing repository name',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.white,
